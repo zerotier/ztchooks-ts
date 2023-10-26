@@ -1,8 +1,5 @@
 # ZTC Hooks TypeScript
 
-
-# ZTC Hooks
-
 `ztchooks` provides primitives for serializing and verifying hooks fired from [ZeroTier Central](https://my.zerotier.com)
 
 Webhook signatures from ZeroTier Central are in the HTTP header field: `X-ZTC-Signature`
