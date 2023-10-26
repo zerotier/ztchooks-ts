@@ -1,0 +1,36 @@
+{
+  "name": "@zerotier/ztchooks-ts",
+  "version": "0.1.0",
+  "license": "MPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zerotier/ztchooks-ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zerotier/ztchooks-ts/issues"
+  },
+  "homepage": "https://github.com/zerotier/ztchooks-ts",
+  "author": "ZeroTier, Inc.",
+  "devDependencies": {
+    "@types/jest": "^29.5.4",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@types/crypto-js": "^4.1.2",
+    "crypto-js": "^4.1.1"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "description": "Hook signature verification for ZeroTier Central",
+  "main": "index.ts",
+  "directories": {
+    "test": "tests"
+  },
+  "keywords": [
+    "zerotier",
+    "webhooks"
+  ]
+}
