@@ -8,4 +8,22 @@ describe('testing verifySignature', () => {
     test('test verify signature should pass', () => {
         expect(verifySignature(psk, signature, payload, Number.MAX_SAFE_INTEGER)).toBe(true);
     });
+
+    test('invalid signature fails', () => {
+        expect(
+            verifySignature(
+                psk,
+                signature.replace("9", "0"),
+                payload,
+                Number.MAX_SAFE_INTEGER
+            )
+        ).toBe(false)
+    });
+
+    // Note: this test depends on the current clock being later than the timestamp
+    // above (6-Sept-2023)
+    test('expired signature fails', () => {
+        jest.spyOn(global.console, 'error').mockImplementationOnce((_: any) => {});
+        expect(verifySignature(psk, signature, payload, 1)).toBe(false);
+    });
 });

@@ -1,29 +1,19 @@
 
 import * as crypto from "crypto-js";
 
-export function verifySignature(
-    preSharedKey: string,
-    sigHeader: string,
-    payload: string,
-    toleranceSeconds: number): boolean {
-
+export function verifySignature(psk: string, sigHeader: string, payload: string, ttl: number): boolean {
     try {
-        var header = parseHeader(sigHeader, toleranceSeconds);
-        var expectedSig = generateExpectedSignature(header, preSharedKey, payload);
+        const header = parseHeader(sigHeader, ttl);
+        const expectedSig = generateExpectedSignature(header, psk, payload);
 
-        for (var i = 0; i < header.signatures.length; i++) {
-            if (header.signatures[i] === expectedSig) {
-                return true;
-            }
-        }
+        return !!header.signatures.find((val) => val == expectedSig);
     } catch (error) {
-        console.log(error)
+        console.error(error);
         return false;
     }
-    return false;
 }
 
-class signedHeader {
+class SignedHeader {
     timestamp: number;
     signatures: string[];
 
@@ -33,28 +23,26 @@ class signedHeader {
     }
 }
 
-function parseHeader(sigHeader: string, toleranceSeconds: number): signedHeader {
+function parseHeader(sigHeader: string, ttl: number): SignedHeader {
     var pairs: string[] = sigHeader.split(',');
-    var sh = decode(pairs, toleranceSeconds);
+    var sh = decode(pairs, ttl);
     if (sh.signatures.length == 0) {
         throw "Invalid Signature";
     }
 
-    return sh
+    return sh;
 }
 
-function decode(pairs: string[], toleranceSeconds: number): signedHeader {
-    var sh = new signedHeader();
-    for (var i = 0; i < pairs.length; i++) {
-        var p = pairs[i];
-
+function decode(pairs: string[], ttl: number): SignedHeader {
+    const sh = new SignedHeader();
+    for (const p of pairs) {
         var parts = p.split('=');
+
         if (parts.length != 2) {
             throw "Invalid Header";
         }
 
-        var item = parts[0];
-        var value = parts[1];
+        const [item, value] = parts;
 
         if (item == "t") {
             var timestamp = parseInt(value, 10);
@@ -65,18 +53,18 @@ function decode(pairs: string[], toleranceSeconds: number): signedHeader {
         }
 
         if (item[0] == "v") {
-            sh.signatures.push(value)
+            sh.signatures.push(value);
         }
     }
 
-    if ((Date.now() / 1000) > (sh.timestamp + toleranceSeconds)) {
+    if ((Date.now() / 1000) > (sh.timestamp + ttl)) {
         throw "Timestamp Expired";
     }
 
     return sh;
 }
 
-function generateExpectedSignature(sh: signedHeader, preSharedKey: string, payload: string) {
-    var tmp = sh.timestamp.toLocaleString().split(',').join('') + "," + payload;
-    return crypto.enc.Hex.stringify(crypto.HmacSHA256(tmp, crypto.enc.Hex.parse(preSharedKey)));
+function generateExpectedSignature(sh: SignedHeader, psk: string, payload: string) {
+    const sig = sh.timestamp.toLocaleString().split(',').join('') + "," + payload;
+    return crypto.enc.Hex.stringify(crypto.HmacSHA256(sig, crypto.enc.Hex.parse(psk)));
 }
