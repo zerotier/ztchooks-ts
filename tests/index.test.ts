@@ -8,4 +8,7 @@ describe('testing verifySignature', () => {
     test('test verify signature should pass', () => {
         expect(verifySignature(psk, signature, payload, Number.MAX_SAFE_INTEGER)).toBe(true);
     });
+    test('test verify signature should fail', () => {
+        expect(verifySignature("asdf", signature, payload, Number.MAX_SAFE_INTEGER)).toBe(false);
+    });
 });

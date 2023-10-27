@@ -1,3 +1,5 @@
+![test workflow](https://github.com/zerotier/ztchooks-ts/actions/workflows/node.yml/badge.svg)
+
 # ZTC Hooks TypeScript
 
 `ztchooks` provides primitives for serializing and verifying hooks fired from [ZeroTier Central](https://my.zerotier.com)
